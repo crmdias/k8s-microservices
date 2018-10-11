@@ -9,6 +9,7 @@ client = pymongo.MongoClient(uri)
 
 db = client.get_default_database()
 
+
 @app.route("/user/auth")
 def user_auth():
     username = request.headers.get('username')
@@ -19,12 +20,14 @@ def user_auth():
         return "{\"message\": \"Bad request: password missing\"}", 400
 
     try:
-        user = db['workshop_users'].find({'username': username, 'password': password})[0]
+        user = db['workshop_users'].find(
+            {'username': username, 'password': password})[0]
     except Exception as e:
         print(e)
         return "{\"message\": \"Unable to authenticate with the given user\"}", 403
 
     return jwt.encode({'user_id': user["id"]}, '31AB8F2718655495D5347A325FA9A', algorithm='HS256'), 200
-    
+
+
 if __name__ == "__main__":
-    app.run()
+    app.run(host='localhost', port=12345)
